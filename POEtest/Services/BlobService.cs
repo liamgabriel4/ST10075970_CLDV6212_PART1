@@ -8,7 +8,7 @@ namespace POEtest.Services
     public class BlobService
     {
         private readonly BlobServiceClient _blobServiceClient;
-        private readonly string _containerName = "birds";
+        private readonly string _containerName = "products";
 
         public BlobService(string connectionString)
         {
