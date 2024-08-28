@@ -1,8 +1,65 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home - ABC RETAIL";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <!-- Jumbotron Section for Welcome Message -->
+    <div class="jumbotron bg-light p-5 rounded shadow-sm">
+        <h1 class="display-4 text-center">Welcome to ABC RETAIL!</h1>
+        <p class="lead text-center">Your trusted new car and motorbike dealership.</p>
+        <hr class="my-4">
+        <p class="text-center">
+            At ABC RETAIL, we pride ourselves on our ability to source any brand of car or motorbike that you desire. Our commitment to you is a guarantee that you'll find the vehicle of your choice at the best prices nationwide.
+        </p>
+        <div class="text-center">
+            <a class="btn btn-primary btn-lg" href="Products" role="button">Explore Our Inventory</a>
+        </div>
+    </div>
+
+    <!-- Why Choose Us Section -->
+    <div class="row mt-5 align-items-center">
+        <div class="col-md-6">
+            <h2>Why Choose ABC RETAIL?</h2>
+            <ul class="list-unstyled">
+                <li><i class="bi bi-check-circle-fill text-success"></i> Wide Range of Brands</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Best Prices Nationwide</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Hassle-Free Sourcing Guarantee</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Expert Advice & Customer Support</li>
+            </ul>
+        </div>
+        <div class="col-md-6 text-center">
+            <img src="https://images.pexels.com/photos/19828707/pexels-photo-19828707/free-photo-of-a-car-and-a-motorcycle.jpeg" alt="Showroom" class="img-fluid rounded shadow" style="max-height: 350px; object-fit: cover;">
+        </div>
+    </div>
+
+    <!-- Product Categories Section -->
+    <div class="row mt-5 text-center">
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h3 class="card-title">Cars</h3>
+                    <p class="card-text">Explore our extensive collection of new cars from all major brands. Whether you are looking for luxury, performance, or economy, we have it all.</p>
+                    <a class="btn btn-outline-primary" href="Products?category=Cars">View Cars</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h3 class="card-title">Motorbikes</h3>
+                    <p class="card-text">Discover a range of motorbikes that suit every style and need. From cruisers to sports bikes, find your perfect ride at ABC RETAIL.</p>
+                    <a class="btn btn-outline-primary" href="Products?category=Motorbikes">View Motorbikes</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h3 class="card-title">Special Orders</h3>
+                    <p class="card-text">Can't find what you're looking for? Let us know! We specialize in sourcing any brand and model at the best prices.</p>
+                    <a class="btn btn-outline-primary" href="Orders">Place an Order</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
