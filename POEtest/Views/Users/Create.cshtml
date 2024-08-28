@@ -1,0 +1,19 @@
+﻿@model POEtest.Models.User
+
+<h1>Add New User</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="User_Name"></label>
+        <input asp-for="User_Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="email"></label>
+        <input asp-for="email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="password"></label>
+        <input asp-for="password" class="form-control" type="password" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

@@ -1,0 +1,69 @@
+﻿@model POEtest.Models.Order
+
+@{
+    var users = ViewData["Users"] as List<User> ?? new List<User>();
+    var products = ViewData["Products"] as List<Product> ?? new List<Product>();
+}
+
+<h2>Register New Order</h2>
+
+@using (Html.BeginForm("Register", "Orders", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <!-- User Selection -->
+        <div class="form-group">
+            @Html.LabelFor(model => model.User_ID, "Select User", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select asp-for="User_ID" class="form-control">
+                    <option value="">-- Select User --</option>
+                    @foreach (var user in users)
+                    {
+                        <option value="@user.User_Id">@user.User_Name</option>
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.User_ID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <!-- Product Selection -->
+        <div class="form-group">
+            @Html.LabelFor(model => model.Product_ID, "Select Product", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select asp-for="Product_ID" class="form-control">
+                    <option value="">-- Select Product --</option>
+                    @foreach (var product in products)
+                    {
+                        <option value="@product.Product_Id">@product.Product_Name</option>
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.Product_ID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <!-- Date Selection -->
+        <div class="form-group">
+            @Html.LabelFor(model => model.Order_Date, "Select Date", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Order_Date, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                @Html.ValidationMessageFor(model => model.Order_Date, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <!-- Location Input -->
+        <div class="form-group">
+            @Html.LabelFor(model => model.Order_Location, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Order_Location, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Order_Location, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Register Order" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
