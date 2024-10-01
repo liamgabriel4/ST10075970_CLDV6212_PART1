@@ -1,14 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net.Http;
+using System.Net.Http.Json;
 using POEtest.Models;
-using POEtest.Services;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class FilesController : Controller
 {
-    private readonly AzureFileShareService _fileShareService;
+    private readonly HttpClient _httpClient;
 
-    public FilesController(AzureFileShareService fileShareService)
+    public FilesController(HttpClient httpClient)
     {
-        _fileShareService = fileShareService;
+        _httpClient = httpClient;
     }
 
     public async Task<IActionResult> Index()
@@ -16,7 +19,8 @@ public class FilesController : Controller
         List<FileModel> files;
         try
         {
-            files = await _fileShareService.ListFilesAsync("uploads");
+            // Call the Azure Function to list files
+            files = await _httpClient.GetFromJsonAsync<List<FileModel>>("http://st10075970cloudpart2.azurewebsites.net/api/ListFiles");
         }
         catch (Exception ex)
         {
@@ -40,13 +44,16 @@ public class FilesController : Controller
         {
             using (var stream = file.OpenReadStream())
             {
-                string directoryName = "uploads";
-                string fileName = file.FileName;
+                // Prepare the content for the HTTP POST request
+                var content = new MultipartFormDataContent();
+                content.Add(new StreamContent(stream), "file", file.FileName);
 
-                await _fileShareService.UploadFileAsync(directoryName, fileName, stream);
+                // Call the Azure Function to upload the file
+                var response = await _httpClient.PostAsync("http://st10075970cloudpart2.azurewebsites.net/api/UploadFile", content);
+                response.EnsureSuccessStatusCode();
+
+                TempData["Message"] = $"File '{file.FileName}' uploaded successfully!";
             }
-
-            TempData["Message"] = $"File '{file.FileName}' uploaded successfully!";
         }
         catch (Exception ex)
         {
@@ -56,7 +63,6 @@ public class FilesController : Controller
         return RedirectToAction("Index");
     }
 
-    // Handle file download
     [HttpGet]
     public async Task<IActionResult> DownloadFile(string fileName)
     {
@@ -67,18 +73,21 @@ public class FilesController : Controller
 
         try
         {
-            var fileStream = await _fileShareService.DownloadFileAsync("uploads", fileName);
+            // Call the Azure Function to download the file
+            var response = await _httpClient.GetAsync($"http://st10075970cloudpart2.azurewebsites.net/api/DownloadFile{fileName}");
 
-            if (fileStream == null)
+            if (!response.IsSuccessStatusCode)
             {
                 return NotFound($"File '{fileName}' not found.");
             }
 
-            return File(fileStream, "application/octet-stream", fileName);
+            var stream = await response.Content.ReadAsStreamAsync();
+            return File(stream, "application/octet-stream", fileName);
         }
         catch (Exception ex)
         {
             return BadRequest($"Error downloading file: {ex.Message}");
         }
     }
+    //Mrzygłód, K., 2022. Azure for Developers. 2nd ed. August: [Meeta Rajani]
 }

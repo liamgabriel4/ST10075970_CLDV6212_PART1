@@ -1,65 +1,82 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using POEtest.Models;
 using POEtest.Services;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace POEtest.Controllers
 {
     public class ProductsController : Controller
     {
-       private readonly BlobService _blobService;
-    private readonly TableStorageService _tableStorageService;
+        private readonly BlobService _blobService;
+        private readonly TableStorageService _tableStorageService;
 
-    public ProductsController(BlobService blobService, TableStorageService tableStorageService)
-    {
-        _blobService = blobService;
-        _tableStorageService = tableStorageService;
-    }
-
-    [HttpGet]
-    public IActionResult AddProduct()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> AddProduct(Product product, IFormFile file)
-    {
-        if (file != null)
+        public ProductsController(BlobService blobService, TableStorageService tableStorageService)
         {
-            using var stream = file.OpenReadStream();
-            var imageUrl = await _blobService.UploadAsync(stream, file.FileName);
-            product.ImageUrl = imageUrl;
+            _blobService = blobService;
+            _tableStorageService = tableStorageService;
         }
 
-        if (ModelState.IsValid)
+        [HttpGet]
+        public IActionResult AddProduct()
         {
-            product.PartitionKey = "ProductsPartition";
-            product.RowKey = Guid.NewGuid().ToString();
-            await _tableStorageService.AddProductAsync(product);
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddProduct(Product product, IFormFile file)
+        {
+            if (file != null)
+            {
+                using var stream = file.OpenReadStream();
+
+                // Call Azure Function to add product
+                var httpClient = new HttpClient();
+                var formContent = new MultipartFormDataContent
+                {
+                    { new StreamContent(stream), "file", file.FileName }
+                };
+
+                var jsonProduct = JsonConvert.SerializeObject(product);
+                formContent.Add(new StringContent(jsonProduct, Encoding.UTF8, "application/json"), "product");
+
+                var response = await httpClient.PostAsync("http://st10075970cloudpart2.azurewebsites.net/api/AddProduct", formContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = "Product added successfully!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Failed to add product.");
+                }
+            }
+
+            return View(product);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteProduct(string partitionKey, string rowKey, string imageUrl)
+        {
+            if (!string.IsNullOrEmpty(imageUrl))
+            {
+                await _blobService.DeleteBlobAsync(imageUrl);
+            }
+
+            // Delete Table entity
+            await _tableStorageService.DeleteProductAsync(partitionKey, rowKey);
+
             return RedirectToAction("Index");
         }
-        return View(product);
-    }
 
-    [HttpPost]
-    public async Task<IActionResult> DeleteProduct(string partitionKey, string rowKey, Product product )
-    {
-         
-        if (product != null && !string.IsNullOrEmpty(product.ImageUrl))
+        public async Task<IActionResult> Index()
         {
-            // Delete the associated blob image
-            await _blobService.DeleteBlobAsync(product.ImageUrl);
+            var products = await _tableStorageService.GetAllProductsAsync();
+            return View(products);
         }
-        //Delete Table entity
-        await _tableStorageService.DeleteProductAsync(partitionKey, rowKey);
-
-        return RedirectToAction("Index");
     }
-
-    public async Task<IActionResult> Index()
-    {
-        var products = await _tableStorageService.GetAllProductsAsync();
-        return View(products);
-    }
-    }
+    //Mrzygłód, K., 2022. Azure for Developers. 2nd ed. August: [Meeta Rajani]
 }

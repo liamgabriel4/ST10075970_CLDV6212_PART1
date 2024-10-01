@@ -1,20 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using POEtest.Models;
 using POEtest.Services;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System;
 
 namespace POEtest.Controllers
 {
     public class OrdersController : Controller
     {
+        private readonly HttpClient _httpClient;
         private readonly TableStorageService _tableStorageService;
-        private readonly QueueService _queueService;
+        private readonly string _azureFunctionBaseUrl;
 
-        public OrdersController(TableStorageService tableStorageService, QueueService queueService)
+        public OrdersController(HttpClient httpClient, TableStorageService tableStorageService)
         {
+            _httpClient = httpClient;
             _tableStorageService = tableStorageService;
-            _queueService = queueService;
+
+            // Set the base URL for the Azure Function
+            _azureFunctionBaseUrl = "http://st10075970cloudpart2.azurewebsites.net/api"; 
         }
 
         // Action to display all orders
@@ -28,7 +36,7 @@ namespace POEtest.Controllers
         public async Task<IActionResult> Register()
         {
             var users = await _tableStorageService.GetAllUsersAsync();
-            var products = await _tableStorageService.GetAllProductsAsync(); // Corrected method call
+            var products = await _tableStorageService.GetAllProductsAsync(); 
 
             // Check for null or empty lists
             if (users == null || users.Count == 0)
@@ -55,15 +63,29 @@ namespace POEtest.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Prepare order data
                 order.Order_Date = DateTime.SpecifyKind(order.Order_Date, DateTimeKind.Utc);
                 order.PartitionKey = "OrdersPartition";
                 order.RowKey = Guid.NewGuid().ToString();
-                await _tableStorageService.AddOrderAsync(order);
 
-                string message = $"New order from user {order.User_ID} of product {order.Product_ID} at {order.Order_Location} on {order.Order_Date}";
-                await _queueService.SendMessageAsync(message);
+                // Call Azure Function to add the order
+                var functionUrl = $"{_azureFunctionBaseUrl}/AddOrder";
+                var orderJson = JsonSerializer.Serialize(order);
+                var content = new StringContent(orderJson, Encoding.UTF8, "application/json");
 
-                return RedirectToAction("Index");
+                // Send HTTP POST request to Azure Function
+                var response = await _httpClient.PostAsync(functionUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // If success, redirect to the Index action
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    // Log error or display appropriate message
+                    ModelState.AddModelError("", "Failed to register order.");
+                }
             }
 
             // If validation fails, reload the users and products
@@ -75,5 +97,5 @@ namespace POEtest.Controllers
             return View(order);
         }
     }
+    //Mrzygłód, K., 2022. Azure for Developers. 2nd ed. August: [Meeta Rajani]
 }
-

@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POEtest", "POEtest\POEtest.csproj", "{6D11E155-7B30-4392-B095-9A124C3A5DD1}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POEtestFunction", "POEtestFunction\POEtestFunction.csproj", "{10E3E3D9-19EA-48B5-9AF8-7DD5A7C0328A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{6D11E155-7B30-4392-B095-9A124C3A5DD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D11E155-7B30-4392-B095-9A124C3A5DD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D11E155-7B30-4392-B095-9A124C3A5DD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10E3E3D9-19EA-48B5-9AF8-7DD5A7C0328A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10E3E3D9-19EA-48B5-9AF8-7DD5A7C0328A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10E3E3D9-19EA-48B5-9AF8-7DD5A7C0328A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10E3E3D9-19EA-48B5-9AF8-7DD5A7C0328A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using POEtest.Models;
 using POEtest.Services;
+using System.Threading.Tasks;
 
 namespace POEtest.Controllers
 {
     public class UsersController : Controller
     {
-    private readonly TableStorageService _tableStorageService;
+        private readonly TableStorageService _tableStorageService;
 
         public UsersController(TableStorageService tableStorageService)
         {
@@ -27,13 +28,14 @@ namespace POEtest.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(User user)
         {
-            user.PartitionKey = "UsersPartition";
-            user.RowKey = Guid.NewGuid().ToString();
+            user.PartitionKey = "UsersPartition"; // Set the partition key
+            user.RowKey = Guid.NewGuid().ToString(); // Generate a unique row key
 
             await _tableStorageService.AddUserAsync(user);
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         public async Task<IActionResult> Delete(string partitionKey, string rowKey)
         {
             await _tableStorageService.DeleteUserAsync(partitionKey, rowKey);
@@ -50,4 +52,5 @@ namespace POEtest.Controllers
             return View(user);
         }
     }
+    //Mrzygłód, K., 2022. Azure for Developers. 2nd ed. August: [Meeta Rajani]
 }

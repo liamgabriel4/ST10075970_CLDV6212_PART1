@@ -3,8 +3,8 @@
 <h1>Products</h1>
 <a href="@Url.Action("AddProduct", "Products")" class="btn btn-primary">Add New Product</a>
 
-<table class="table">
-    <thead>
+<table class="table table-bordered table-hover">
+    <thead class="thead-dark">
         <tr>
             <th>Name</th>
             <th>Description</th>
@@ -30,7 +30,7 @@
                     <form asp-action="DeleteProduct" method="post" style="display:inline;">
                         <input type="hidden" name="partitionKey" value="@product.PartitionKey" />
                         <input type="hidden" name="rowKey" value="@product.RowKey" />
-                        <input type="hidden" name="ImageUrl" value="@product.ImageUrl" />
+                        <input type="hidden" name="imageUrl" value="@product.ImageUrl" />
                         <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this product?');">Delete</button>
                     </form>
                 </td>
@@ -38,3 +38,5 @@
         }
     </tbody>
 </table>
+
+                        @* Mrzygłód, K., 2022. Azure for Developers. 2nd ed. August: [Meeta Rajani] *@

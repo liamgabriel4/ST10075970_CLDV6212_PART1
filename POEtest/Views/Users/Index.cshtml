@@ -16,7 +16,7 @@
         @foreach (var user in Model)
         {
             <tr>
-                <td>@user.User_Name</td>
+                <td>@user.User_Name</td>  @* Display User_Name *@
                 <td>@user.email</td>
                 <td>
                     <form asp-action="Delete" method="post" style="display:inline;">
@@ -29,3 +29,5 @@
         }
     </tbody>
 </table>
+
+                    @* Mrzygłód, K., 2022. Azure for Developers. 2nd ed. August: [Meeta Rajani] *@

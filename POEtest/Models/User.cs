@@ -7,7 +7,7 @@ namespace POEtest.Models
     public class User : ITableEntity
     {
         [Key]
-        public int User_Id { get; set; }
+        public int User_Id { get; set; } 
         public string? User_Name { get; set; }
         public string? email { get; set; }
         public string? password { get; set; }
@@ -18,4 +18,5 @@ namespace POEtest.Models
         public ETag ETag { get; set; }
         public DateTimeOffset? Timestamp { get; set; }
     }
+    //Mrzygłód, K., 2022. Azure for Developers. 2nd ed. August: [Meeta Rajani]
 }

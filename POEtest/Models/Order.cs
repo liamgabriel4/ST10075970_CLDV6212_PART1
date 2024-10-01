@@ -28,4 +28,5 @@ namespace POEtest.Models
         [Required(ErrorMessage = "Please enter the location.")]
         public string? Order_Location { get; set; }
     }
+    //Mrzygłód, K., 2022. Azure for Developers. 2nd ed. August: [Meeta Rajani]
 }
